@@ -1,0 +1,17 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": "container",
+  "height": "container",
+  "data": {"values": []},
+  "mark": "bar",
+  "encoding": {
+    "x": {"field": "state", "type": "nominal", "sort": "-y"},
+    "y": {"field": "total_renewables", "type": "quantitative"},
+    "color": {"field": "total_renewables", "type": "quantitative", "scale": {"scheme": "blues"}},
+    "tooltip": [
+      {"field": "state"},
+      {"field": "total_renewables", "format": ".0f"}
+    ]
+  },
+  "title": "Total Renewables by State (GWh)"
+}

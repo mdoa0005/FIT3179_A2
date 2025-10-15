@@ -1,0 +1,21 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": "container",
+  "height": "container",
+  "data": {"values": []},
+  "projection": {"type": "mercator", "center": [133, -25], "scale": 600},
+  "mark": "circle",
+  "encoding": {
+    "longitude": {"field": "lon", "type": "quantitative"},
+    "latitude": {"field": "lat", "type": "quantitative"},
+    "size": {"field": "capacity", "type": "quantitative", "scale": {"range": [20, 500]}},
+    "color": {"field": "type", "type": "nominal", "scale": {"domain": ["Wind", "Solar", "Hydro", "Bioenergy"], "range": ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728"]}},
+    "tooltip": [
+      {"field": "name", "type": "nominal"},
+      {"field": "postcode", "type": "nominal"},
+      {"field": "capacity", "type": "quantitative"},
+      {"field": "type", "type": "nominal"}
+    ]
+  },
+  "title": "Renewable Energy Installations on Australia Map (Size: Capacity, Color: Type)"
+}

@@ -1,0 +1,21 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": "container",
+  "height": "container",
+  "data": {"values": []},
+  "transform": [
+    {"fold": ["solar_pv", "wind", "hydro", "bioenergy"], "as": ["source", "gwh"]}
+  ],
+  "mark": "bar",
+  "encoding": {
+    "x": {"field": "state", "type": "nominal"},
+    "y": {"field": "gwh", "type": "quantitative", "stack": "normalize", "title": "Proportion"},
+    "color": {"field": "source", "type": "nominal", "scale": {"scheme": "category10"}},
+    "tooltip": [
+      {"field": "state"},
+      {"field": "source"},
+      {"field": "gwh", "format": ".0f"}
+    ]
+  },
+  "title": "Renewable Energy Source Breakdown by State (Normalized)"
+}

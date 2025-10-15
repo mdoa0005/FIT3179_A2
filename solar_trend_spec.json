@@ -1,0 +1,17 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": "container",
+  "height": "container",
+  "data": {"values": []},
+  "mark": "line",
+  "encoding": {
+    "x": {"field": "year", "type": "ordinal"},
+    "y": {"field": "installations", "type": "quantitative"},
+    "color": {"value": "#ff7f0e"},
+    "tooltip": [
+      {"field": "year"},
+      {"field": "installations", "format": ".0f"}
+    ]
+  },
+  "title": "Yearly Solar Installations Trend"
+}

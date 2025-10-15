@@ -1,0 +1,18 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": "container",
+  "height": "container",
+  "data": {"values": []},
+  "mark": "arc",
+  "encoding": {
+    "theta": {"field": "per_capita", "type": "quantitative", "stack": true},
+    "radius": {"field": "per_capita", "scale": {"type": "sqrt", "zero": true, "rangeMin": 20}},
+    "color": {"field": "state", "type": "nominal"},
+    "tooltip": [
+      {"field": "state"},
+      {"field": "per_capita", "format": ".2f"}
+    ]
+  },
+  "view": {"stroke": null},
+  "title": "Per-Capita Renewables GWh by State (Radial)"
+}
