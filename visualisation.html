@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Australian Renewable Energy Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .narrative {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .chart {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin: 0;
+            min-height: 500px;
+        }
+        #map {
+            min-height: 600px;
+            margin-bottom: 20px;
+        }
+        .text {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin: 0;
+            min-height: 500px;
+            grid-column: 3;
+        }
+        #breakdown, #per-capita, #total-renewables {
+            grid-column: span 2;
+        }
+        .full-width {
+            grid-column: span 3;
+        }
+        .chart-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #34495e;
+        }
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            .full-width {
+                grid-column: span 1;
+            }
+            .text {
+                grid-column: auto;
+            }
+            #breakdown, #per-capita, #total-renewables {
+                grid-column: auto;
+            }
+        }
+        .collapsible {
+            background-color: #fff;
+            color: #2c3e50;
+            cursor: pointer;
+            padding: 10px 0;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        .collapsible:hover {
+            color: #34495e;
+        }
+        .content {
+            padding: 0 0 20px 0;
+            display: block;
+            background-color: #fff;
+        }
+        .content.collapsed {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Australian Renewable Energy Dashboard</h1>
+    <div class="narrative">
+        <button class="collapsible">Lorem ipsum</button>
+        <div class="content">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+        </div>
+    </div>
+    <div style="text-align: center; margin-bottom: 20px;">
+        <label for="energySelect">Filter by Energy Type: </label>
+        <select id="energySelect">
+            <option value="all">All Types</option>
+            <option value="solar_pv">Solar</option>
+            <option value="wind">Wind</option>
+            <option value="hydro">Hydro</option>
+            <option value="bioenergy">Bioenergy</option>
+        </select>
+    </div>
+    <div class="dashboard">
+        <div class="chart full-width" id="map"></div>
+        <div class="narrative full-width" style="margin-top: 20px;">
+            <button class="collapsible">Lorem ipsum dolor sit amet</button>
+            <div class="content">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            </div>
+        </div>
+        <div class="chart" id="solar-trend"></div>
+        <div class="chart" id="wind-trend"></div>
+        <div class="chart" id="hydro-trend"></div>
+        <div id="filter" class="full-width" style="text-align: center; margin-bottom: 20px;">
+            <div id="stateFilter" style="display: inline-block;">
+                <label>Filter by State (select multiple):</label><br>
+                <input type="checkbox" value="NSW" id="stateNSW"> New South Wales<br>
+                <input type="checkbox" value="VIC" id="stateVIC"> Victoria<br>
+                <input type="checkbox" value="QLD" id="stateQLD"> Queensland<br>
+                <input type="checkbox" value="SA" id="stateSA"> South Australia<br>
+                <input type="checkbox" value="WA" id="stateWA"> Western Australia<br>
+                <input type="checkbox" value="TAS" id="stateTAS"> Tasmania<br>
+                <input type="checkbox" value="NT" id="stateNT"> Northern Territory<br>
+                <input type="checkbox" value="ACT" id="stateACT"> Australian Capital Territory<br>
+            </div>
+        </div>
+        <div class="chart" id="breakdown"></div>
+        <div class="text">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
+        <div class="chart" id="per-capita"></div>
+        <div class="text">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</div>
+        <div class="chart" id="total-renewables"></div>
+        <div class="text">Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>
+        <div class="full-width" style="padding: 20px; background-color: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-top: 20px;">
+            <h2>Conclusion</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        </div>
+    </div>
+
+    <script>
+        // Load all CSVs
+        Promise.all([
+            fetch('au_wind_farms.csv').then(r => r.text()),
+            fetch('other_renewables.csv').then(r => r.text()),
+            fetch('state_gwh.csv').then(r => r.text()),
+            fetch('renewable_trends.csv').then(r => r.text()),
+            fetch('state_renewables.csv').then(r => r.text())
+        ]).then(([windCsv, otherCsv, stateGwhCsv, trendsCsv, stateRenewCsv]) => {
+            // Parse wind farms
+            const windData = windCsv.split('\n').slice(1).map(row => {
+                const cols = row.split(',');
+                let name = cols[0];
+                if (!name || name.trim() === '') name = 'Unnamed';
+                return {
+                    name: name,
+                    state: cols[1],
+                    capacity: +cols[2],
+                    status: cols[3],
+                    lat: +cols[4],
+                    lon: +cols[5],
+                    type: 'Wind'
+                };
+            }).filter(d => !isNaN(d.lat) && !isNaN(d.lon));
+
+            // Parse other renewables
+            const otherData = otherCsv.split('\n').slice(1).map(row => {
+                const cols = row.split(',');
+                let name = cols[6] || ''; // Assuming name is in cols[6] if present, else blank
+                if (!name || name.trim() === '') {
+                    name = `${cols[0]} ${cols[1]} Farm`;
+                }
+                return {
+                    postcode: cols[0],
+                    type: cols[1],
+                    lat: +cols[2],
+                    lon: +cols[3],
+                    capacity: +cols[4],
+                    state: cols[5] || '',
+                    name: name
+                };
+            }).filter(d => !isNaN(d.lat) && !isNaN(d.lon));
+
+            // Combine data for map
+            const mapData = windData.concat(otherData);
+
+            // Parse state GWh
+            const stateGwhData = stateGwhCsv.split('\n').slice(1).map(row => {
+                const cols = row.split(',');
+                return {
+                    state: cols[0],
+                    solar_pv: +cols[1],
+                    wind: +cols[2],
+                    hydro: +cols[3],
+                    bioenergy: +cols[4],
+                    total_renewables: +cols[5],
+                    renewable_share: +cols[6],
+                    total_electricity: +cols[7]
+                };
+            }).filter(d => d.state && d.state !== 'Australia');
+
+            // Parse renewable trends
+            const trendsData = trendsCsv.split('\n').slice(1).map(row => {
+                const cols = row.split(',');
+                return {
+                    year: cols[0],
+                    type: cols[1],
+                    installations: +cols[2]
+                };
+            }).filter(d => d.year);
+
+            const solarTrends = trendsData.filter(d => d.type === 'Solar');
+            const windTrends = trendsData.filter(d => d.type === 'Wind');
+            const hydroTrends = trendsData.filter(d => d.type === 'Hydro');
+
+            // Parse state renewables
+            const stateRenewData = stateRenewCsv.split('\n').slice(1).map(row => {
+                const cols = row.split(',');
+                return {
+                    state: cols[0],
+                    solar_pv: +cols[1],
+                    wind: +cols[2],
+                    hydro: +cols[3],
+                    bioenergy: +cols[4],
+                    total_renewables: +cols[5],
+                    renewable_share: +cols[6],
+                    total_electricity: +cols[7],
+                    population: +cols[8],
+                    state_code: cols[9],
+                    per_capita: +cols[10]
+                };
+            }).filter(d => d.state && d.state !== 'Australia');
+
+
+            // Visualization 1: Australia Map with Wind Farm Locations
+            const spec1 = {
+                "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+                "width": "container",
+                "height": "container",
+                "data": {"values": mapData},
+                "projection": {"type": "mercator", "center": [133, -25], "scale": 600},
+                "mark": "circle",
+                "encoding": {
+                    "longitude": {"field": "lon", "type": "quantitative"},
+                    "latitude": {"field": "lat", "type": "quantitative"},
+                    "size": {"field": "capacity", "type": "quantitative", "scale": {"range": [20, 500]}},
+                    "color": {"field": "type", "type": "nominal", "scale": {"domain": ["Wind", "Solar", "Hydro", "Bioenergy"], "range": ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728"]}},
+                    "tooltip": [
+                        {"field": "name", "type": "nominal"},
+                        {"field": "postcode", "type": "nominal"},
+                        {"field": "capacity", "type": "quantitative"},
+                        {"field": "type", "type": "nominal"}
+                    ]
+                },
+                "title": "Renewable Energy Installations on Australia Map (Size: Capacity, Color: Type)"
+            };
+
+            // Visualization 2: Stacked Bar Chart - Renewable Source Breakdown by State
+            const spec2 = {
+                "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+                "width": "container",
+                "height": "container",
+                "data": {"values": stateGwhData},
+                "transform": [
+                    {"fold": ["solar_pv", "wind", "hydro", "bioenergy"], "as": ["source", "gwh"]},
+                    {"calculate": "datum.source === 'solar_pv' ? 'Solar' : datum.source === 'wind' ? 'Wind' : datum.source === 'hydro' ? 'Hydro' : datum.source === 'bioenergy' ? 'Bioenergy' : datum.source", "as": "source"}
+                ],
+                "mark": "bar",
+                "encoding": {
+                    "x": {"field": "state", "type": "nominal"},
+                    "y": {"field": "gwh", "type": "quantitative", "stack": "normalize", "title": "Proportion"},
+                    "color": {"field": "source", "type": "nominal", "scale": {"scheme": "category10"}},
+                    "tooltip": [
+                        {"field": "state"},
+                        {"field": "source"},
+                        {"field": "gwh", "format": ".0f"}
+                    ]
+                },
+                "title": "Renewable Energy Source Breakdown by State (Normalized)"
+            };
+
+            // Visualization 3: Solar Installations Trend
+            const spec3 = {
+                "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+                "width": "container",
+                "height": "container",
+                "data": {"values": solarTrends},
+                "mark": "line",
+                "encoding": {
+                    "x": {"field": "year", "type": "ordinal"},
+                    "y": {"field": "installations", "type": "quantitative"},
+                    "color": {"value": "#ff7f0e"},
+                    "tooltip": [
+                        {"field": "year"},
+                        {"field": "installations", "format": ".0f"}
+                    ]
+                },
+                "title": "Yearly Solar Installations Trend"
+            };
+
+            // Visualization 6: Wind Installations Trend
+            const spec6 = {
+                "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+                "width": "container",
+                "height": "container",
+                "data": {"values": windTrends},
+                "mark": "line",
+                "encoding": {
+                    "x": {"field": "year", "type": "ordinal"},
+                    "y": {"field": "installations", "type": "quantitative"},
+                    "color": {"value": "#1f77b4"},
+                    "tooltip": [
+                        {"field": "year"},
+                        {"field": "installations", "format": ".0f"}
+                    ]
+                },
+                "title": "Yearly Wind Installations Trend"
+            };
+
+            // Visualization 7: Hydro Installations Trend
+            const spec7 = {
+                "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+                "width": "container",
+                "height": "container",
+                "data": {"values": hydroTrends},
+                "mark": "line",
+                "encoding": {
+                    "x": {"field": "year", "type": "ordinal"},
+                    "y": {"field": "installations", "type": "quantitative"},
+                    "color": {"value": "#2ca02c"},
+                    "tooltip": [
+                        {"field": "year"},
+                        {"field": "installations", "format": ".0f"}
+                    ]
+                },
+                "title": "Yearly Hydro Installations Trend"
+            };
+
+            // Visualization 4: Radial Chart - Per-Capita Renewables by State
+            const spec4 = {
+                "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+                "width": "container",
+                "height": "container",
+                "data": {"values": stateRenewData},
+                "mark": "arc",
+                "encoding": {
+                    "theta": {"field": "per_capita", "type": "quantitative", "stack": true},
+                    "radius": {"field": "per_capita", "scale": {"type": "sqrt", "zero": true, "rangeMin": 20}},
+                    "color": {"field": "state", "type": "nominal"},
+                    "tooltip": [
+                        {"field": "state"},
+                        {"field": "per_capita", "format": ".2f"}
+                    ]
+                },
+                "view": {"stroke": null},
+                "title": "Per-Capita Renewables GWh by State (Radial)"
+            };
+
+
+            // Visualization 5: Total Renewables by State
+            const spec5 = {
+                "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+                "width": "container",
+                "height": "container",
+                "data": {"values": stateGwhData},
+                "mark": "bar",
+                "encoding": {
+                    "x": {"field": "state", "type": "nominal", "sort": "-y"},
+                    "y": {"field": "total_renewables", "type": "quantitative"},
+                    "color": {"field": "total_renewables", "type": "quantitative", "scale": {"scheme": "blues"}},
+                    "tooltip": [
+                        {"field": "state"},
+                        {"field": "total_renewables", "format": ".0f"}
+                    ]
+                },
+                "title": "Total Renewables by State (GWh)"
+            };
+
+            vegaEmbed('#map', spec1);
+            vegaEmbed('#breakdown', spec2);
+            vegaEmbed('#solar-trend', spec3);
+            vegaEmbed('#per-capita', spec4);
+            vegaEmbed('#total-renewables', spec5);
+            vegaEmbed('#wind-trend', spec6);
+            vegaEmbed('#hydro-trend', spec7);
+
+            // Add interactivity to narratives
+            document.querySelectorAll('.collapsible').forEach(button => {
+                button.addEventListener('click', () => {
+                    const content = button.nextElementSibling;
+                    content.classList.toggle('collapsed');
+                });
+            });
+
+            // State mapping
+            const stateMap = {
+                'NSW': 'New South Wales',
+                'VIC': 'Victoria',
+                'QLD': 'Queensland',
+                'SA': 'South Australia',
+                'WA': 'Western Australia',
+                'TAS': 'Tasmania',
+                'NT': 'Northern Territory',
+                'ACT': 'Australian Capital Territory'
+            };
+
+            // Reverse state mapping
+            const reverseStateMap = {};
+            for (const [code, full] of Object.entries(stateMap)) {
+                reverseStateMap[full] = code;
+            }
+
+            // Energy type mapping
+            const energyMap = {
+                'solar_pv': 'Solar',
+                'wind': 'Wind',
+                'hydro': 'Hydro',
+                'bioenergy': 'Bioenergy'
+            };
+
+            // Function to update charts based on filters
+            const updateCharts = () => {
+                const selectedStates = [];
+                const stateCheckboxes = document.querySelectorAll('#stateFilter input[type="checkbox"]:checked');
+                stateCheckboxes.forEach(cb => selectedStates.push(cb.value));
+                const energySelected = document.getElementById('energySelect').value;
+
+                let filteredMapData = mapData;
+                let filteredGwh = stateGwhData;
+                let filteredRenew = stateRenewData;
+                let filteredTrends = [];
+
+                if (selectedStates.length > 0) {
+                    filteredGwh = stateGwhData.filter(d => selectedStates.includes(reverseStateMap[d.state]));
+                    filteredRenew = stateRenewData.filter(d => selectedStates.includes(reverseStateMap[d.state]));
+                }
+
+                if (energySelected !== 'all') {
+                    const mappedType = energyMap[energySelected];
+                    filteredMapData = filteredMapData.filter(d => d.type === mappedType);
+                }
+
+
+                let foldSources = ["solar_pv", "wind", "hydro", "bioenergy"];
+
+                let yField = 'total_renewables';
+                let title5 = "Total Renewables by State (GWh)";
+                if (energySelected !== 'all') {
+                    yField = energySelected;
+                    title5 = energySelected.charAt(0).toUpperCase() + energySelected.slice(1).replace('_', ' ') + " by State (GWh)";
+                }
+
+                const spec1Filtered = {
+                    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+                    "width": "container",
+                    "height": "container",
+                    "layer": [
+                        {
+                            "data": {
+                                "url": "https://raw.githubusercontent.com/johan/world.geo.json/master/countries/AUS.geo.json",
+                                "format": {"type": "json"}
+                            },
+                            "projection": {"type": "mercator", "center": [133, -25], "scale": 600},
+                            "mark": {"type": "geoshape", "fill": "lightgray", "stroke": "black", "strokeWidth": 1}
+                        },
+                        {
+                            "data": {
+                                "url": "https://raw.githubusercontent.com/markmarkoh/datamaps/master/src/js/data/aus.topo.json",
+                                "format": {"type": "topojson", "feature": "states"}
+                            },
+                            "projection": {"type": "mercator", "center": [133, -25], "scale": 600},
+                            "mark": {"type": "geoshape", "fill": "none", "stroke": "gray", "strokeWidth": 0.5}
+                        },
+                        {
+                            "data": {"values": filteredMapData},
+                            "projection": {"type": "mercator", "center": [133, -25], "scale": 600},
+                            "mark": "circle",
+                            "encoding": {
+                                "longitude": {"field": "lon", "type": "quantitative"},
+                                "latitude": {"field": "lat", "type": "quantitative"},
+                                "size": {"field": "capacity", "type": "quantitative", "scale": {"range": [20, 500]}},
+                                "color": {"field": "type", "type": "nominal", "scale": {"domain": ["Wind", "Solar", "Hydro", "Bioenergy"], "range": ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728"]}},
+                                "tooltip": [
+                                    {"field": "name", "type": "nominal"},
+                                    {"field": "postcode", "type": "nominal"},
+                                    {"field": "capacity", "type": "quantitative"},
+                                    {"field": "type", "type": "nominal"}
+                                ]
+                            }
+                        }
+                    ],
+                    "title": "Renewable Energy Installations on Australia Map (Size: Capacity, Color: Type)"
+                };
+
+                const spec2Filtered = {
+                    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+                    "width": "container",
+                    "height": "container",
+                    "data": {"values": filteredGwh},
+                    "transform": [
+                        {"fold": foldSources, "as": ["source", "gwh"]},
+                        {"calculate": "datum.source === 'solar_pv' ? 'Solar' : datum.source === 'wind' ? 'Wind' : datum.source === 'hydro' ? 'Hydro' : datum.source === 'bioenergy' ? 'Bioenergy' : datum.source", "as": "source"}
+                    ],
+                    "mark": "bar",
+                    "encoding": {
+                        "x": {"field": "state", "type": "nominal"},
+                        "y": {"field": "gwh", "type": "quantitative", "stack": "normalize", "title": "Proportion"},
+                        "color": {"field": "source", "type": "nominal", "scale": {"scheme": "category10"}},
+                        "tooltip": [
+                            {"field": "state"},
+                            {"field": "source"},
+                            {"field": "gwh", "format": ".0f"}
+                        ]
+                    },
+                    "title": "Renewable Energy Source Breakdown by State (Normalized)"
+                };
+
+
+                const spec4Filtered = {
+                    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+                    "width": "container",
+                    "height": "container",
+                    "data": {"values": filteredRenew},
+                    "mark": "arc",
+                    "encoding": {
+                        "theta": {"field": "per_capita", "type": "quantitative", "stack": true},
+                        "radius": {"field": "per_capita", "scale": {"type": "sqrt", "zero": true, "rangeMin": 20}},
+                        "color": {"field": "state", "type": "nominal"},
+                        "tooltip": [
+                            {"field": "state"},
+                            {"field": "per_capita", "format": ".2f"}
+                        ]
+                    },
+                    "view": {"stroke": null},
+                    "title": "Per-Capita Renewables GWh by State (Radial)"
+                };
+
+                const spec5Filtered = {
+                    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+                    "width": "container",
+                    "height": "container",
+                    "data": {"values": filteredGwh},
+                    "mark": "bar",
+                    "encoding": {
+                        "x": {"field": "state", "type": "nominal", "sort": "-y"},
+                        "y": {"field": yField, "type": "quantitative"},
+                        "color": {"field": yField, "type": "quantitative", "scale": {"scheme": "blues"}},
+                        "tooltip": [
+                            {"field": "state"},
+                            {"field": yField, "format": ".0f"}
+                        ]
+                    },
+                    "title": title5
+                };
+
+                vegaEmbed('#map', spec1Filtered);
+                vegaEmbed('#breakdown', spec2Filtered);
+                vegaEmbed('#per-capita', spec4Filtered);
+                vegaEmbed('#total-renewables', spec5Filtered);
+            };
+
+            // Initial update
+            updateCharts();
+
+            // Add filter interactivity
+            document.querySelectorAll('#stateFilter input[type="checkbox"]').forEach(cb => cb.addEventListener('change', updateCharts));
+            document.getElementById('energySelect').addEventListener('change', updateCharts);
+        });
+    </script>
+</body>
+</html>
