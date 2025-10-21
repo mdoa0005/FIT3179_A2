@@ -54,10 +54,13 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             margin: 0;
             min-height: 500px;
-            grid-column: 3;
+            grid-column: span 1;
         }
-        #breakdown, #per-capita, #total-renewables {
+        .wide {
             grid-column: span 2;
+        }
+        .narrow {
+            grid-column: span 1;
         }
         .full-width {
             grid-column: span 3;
@@ -78,41 +81,29 @@
             .text {
                 grid-column: auto;
             }
-            #breakdown, #per-capita, #total-renewables {
-                grid-column: auto;
-            }
-        }
-        .collapsible {
-            background-color: #fff;
-            color: #2c3e50;
-            cursor: pointer;
-            padding: 10px 0;
-            width: 100%;
-            border: none;
-            text-align: left;
-            outline: none;
-            font-size: 1.2em;
-            font-weight: bold;
-        }
-        .collapsible:hover {
-            color: #34495e;
         }
         .content {
             padding: 0 0 20px 0;
             display: block;
             background-color: #fff;
         }
-        .content.collapsed {
-            display: none;
-        }
+        .solar { color: #ff7f0e; }
+        .wind { color: #2ca02c; }
+        .hydro { color: #1f77b4; }
+        .bioenergy { color: #d62728; }
     </style>
 </head>
 <body>
     <h1>Australian Renewable Energy Dashboard</h1>
     <div class="narrative">
-        <button class="collapsible">Lorem ipsum</button>
+        <h2>Dashboard Introduction</h2>
         <div class="content">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            This dashboard provides an interactive overview of renewable energy installations and trends across Australia.
+            Explore the map to visualise the locations of <span class="wind">wind</span>, <span class="solar">solar</span>, <span class="hydro">hydro</span>, and <span class="bioenergy">bioenergy</span> projects, with circle sizes representing
+            capacity and colours indicating energy type. Use the filters to focus on specific states or energy types, and examine
+            the charts for detailed insights into renewable energy adoption and growth. The dashboard includes trend lines showing
+            historical installation patterns, state-by-state breakdowns of energy sources, per-capita comparisons, and total production
+            figures to give a comprehensive view of Australia's transition to renewable energy.
         </div>
     </div>
     <div style="text-align: center; margin-bottom: 20px;">
@@ -127,40 +118,86 @@
     </div>
     <div class="dashboard">
         <div class="chart full-width" id="map"></div>
-        <div class="narrative full-width" style="margin-top: 20px;">
-            <button class="collapsible">Lorem ipsum dolor sit amet</button>
+        <div class="narrative full-width" style="margin-top: 20px; width: 100%; max-width: none;">
+            <h2>Renewable Energy Trends</h2>
             <div class="content">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                Australia's renewable energy sector has seen rapid growth in recent years, driven by technological advancements,
+                policy incentives, and increasing awareness of climate change impacts. The trend charts below show yearly installations
+                for <span class="solar">solar</span>, <span class="wind">wind</span>, and <span class="hydro">hydro</span> power, highlighting the increasing contribution of these sources to the national energy mix.
+                <span class="solar">Solar</span> installations have intial high installations due to falling panel costs and rooftop adoption, with a subsequent decrease
+                due to installations being a one time process; while <span class="wind">wind</span> and <span class="hydro">hydro</span> continue to provide steady baseload power.
+                These trends reflect Australia's commitment to reducing carbon emissions and diversifying its energy portfolio.
             </div>
         </div>
-        <div class="chart" id="solar-trend"></div>
-        <div class="chart" id="wind-trend"></div>
-        <div class="chart" id="hydro-trend"></div>
+        <div class="chart narrow" id="solar-trend"></div>
+        <div class="chart narrow" id="wind-trend"></div>
+        <div class="chart narrow" id="hydro-trend"></div>
         <div class="full-width" style="padding: 20px; background-color: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px;">
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            <p>Australia has made significant strides in renewable energy adoption, with solar, wind, and hydro power playing increasingly
+                important roles in the energy landscape. As of recent data, renewables account for over 30% of electricity generation 
+                nationally, with some states exceeding 50%. The visualisations below provide detailed breakdowns by state. This helps 
+                identify not just the largest producers, but also the most efficient adopters relative to their population size, revealing 
+                insights into regional policies, resource availability, and infrastructure development.</p>
         </div>
         <div id="filter" class="full-width" style="text-align: center; margin-bottom: 20px;">
-            <div id="stateFilter" style="display: inline-block;">
-                <label>Filter by State (select multiple):</label><br>
-                <input type="checkbox" value="NSW" id="stateNSW"> New South Wales<br>
-                <input type="checkbox" value="VIC" id="stateVIC"> Victoria<br>
-                <input type="checkbox" value="QLD" id="stateQLD"> Queensland<br>
-                <input type="checkbox" value="SA" id="stateSA"> South Australia<br>
-                <input type="checkbox" value="WA" id="stateWA"> Western Australia<br>
-                <input type="checkbox" value="TAS" id="stateTAS"> Tasmania<br>
-                <input type="checkbox" value="NT" id="stateNT"> Northern Territory<br>
-                <input type="checkbox" value="ACT" id="stateACT"> Australian Capital Territory<br>
+            <div id="stateFilter" style="display: flex; flex-direction: column; align-items: center;">
+                <label>Filter by State (select multiple):</label>
+                <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 15px;">
+                    <input type="checkbox" value="NSW" id="stateNSW"> New South Wales
+                    <input type="checkbox" value="VIC" id="stateVIC"> Victoria
+                    <input type="checkbox" value="QLD" id="stateQLD"> Queensland
+                    <input type="checkbox" value="SA" id="stateSA"> South Australia
+                    <input type="checkbox" value="WA" id="stateWA"> Western Australia
+                    <input type="checkbox" value="TAS" id="stateTAS"> Tasmania
+                    <input type="checkbox" value="NT" id="stateNT"> Northern Territory
+                </div>
             </div>
         </div>
-        <div class="chart" id="breakdown"></div>
-        <div class="text">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
-        <div class="chart" id="per-capita"></div>
-        <div class="text">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</div>
-        <div class="chart" id="total-renewables"></div>
-        <div class="text">Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>
+        <div class="chart wide" id="breakdown"></div>
+        <div class="text">
+            <p>The stacked bar chart illustrates the proportion of different renewable energy sources (solar, wind, hydro, bioenergy) in 
+                each state, normalised for easy comparison across regions with varying total renewable energy production.</p>
+            <p>Each bar represents 100% of a state's renewable energy mix, allowing you to see which energy types dominate in different 
+                regions. For example, states with high solar penetration will show larger orange segments, while those with significant 
+                wind resources will have larger green sections. This visualisation helps identify state strengths and diversification 
+                patterns in Australia's renewable energy landscape.</p>
+        </div>
+        <div class="chart wide" id="per-capita"></div>
+        <div class="text">
+            <p>The radial chart shows per-capita renewable energy generation, highlighting state differences in 
+                renewable energy adoption and infrastructure when adjusted for population size.</p>
+            <p>The size and angle of each arc segment represent the renewable energy output per person in that state. Larger arcs indicate 
+                states with higher renewable energy intensity relative to their population, which could reflect stronger renewable 
+                infrastructure, favourable natural resources, or aggressive policy initiatives. This view helps compare how effectively 
+                different states are harnessing renewables on a per-person basis, accounting for population density and distribution.</p>
+        </div>
+        <div class="chart wide" id="total-renewables"></div>
+        <div class="text">
+            <p>This bar chart displays total renewable energy production by state in gigawatt-hours, sorted from highest to lowest, 
+                providing a clear view of which regions contribute most to Australia's renewable energy capacity.</p>
+            <p>The height of each bar represents the absolute renewable energy output, making it easy to identify the top-producing 
+                states. Factors influencing these totals include population size, industrial activity, available renewable resources, 
+                and state-specific policies promoting renewable development. This chart complements the per-capita view by showing raw production volumes.</p>
+        </div>
         <div class="full-width" style="padding: 20px; background-color: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-top: 20px;">
             <h2>Conclusion</h2>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            <p>In conclusion, Australia's renewable energy landscape is diverse and rapidly growing, with each state leveraging its 
+                unique geographical and climatic advantages. While some states like South Australia lead in wind and solar penetration, 
+                others like Tasmania excel in hydroelectric power. Overall growth across solar, wind, and hydro sectors demonstrates strong 
+                momentum toward sustainable energy goals, with bioenergy providing additional diversification. However, challenges remain 
+                in grid integration, energy storage, and equitable distribution. Continued investment in infrastructure, research and 
+                development, and supportive policies will be crucial for maintaining this trajectory and achieving net-zero emissions 
+                targets by 2050.</p>
+        </div>
+        <div class="full-width" style="padding: 20px; background-color: #f9f9f9; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-top: 20px; font-size: 0.9em;">
+            <h3>References</h3>
+            <ul>
+                <li><a href="https://www.energy.gov.au/publications/australian-energy-statistics-table-o-electricity-generation-fuel-type-2023-24-and-2024" target="_blank">https://www.energy.gov.au/publications/australian-energy-statistics-table-o-electricity-generation-fuel-type-2023-24-and-2024</a></li>
+                <li><a href="https://cer.gov.au/markets/reports-and-data/small-scale-installation-postcode-data" target="_blank">https://cer.gov.au/markets/reports-and-data/small-scale-installation-postcode-data</a></li>
+                <li><a href="https://cer.gov.au/markets/reports-and-data/large-scale-renewable-energy-data" target="_blank">https://cer.gov.au/markets/reports-and-data/large-scale-renewable-energy-data</a></li>
+                <li><a href="https://globalenergymonitor.org/projects/global-wind-power-tracker/" target="_blank">https://globalenergymonitor.org/projects/global-wind-power-tracker/</a></li>
+                <li><a href="https://www.solarpowerworldonline.com/" target="_blank">https://www.solarpowerworldonline.com/</a></li>
+            </ul>
         </div>
     </div>
 
@@ -270,7 +307,7 @@
                     "longitude": {"field": "lon", "type": "quantitative"},
                     "latitude": {"field": "lat", "type": "quantitative"},
                     "size": {"field": "capacity", "type": "quantitative", "scale": {"range": [20, 500]}},
-                    "color": {"field": "type", "type": "nominal", "scale": {"domain": ["Wind", "Solar", "Hydro", "Bioenergy"], "range": ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728"]}},
+                    "color": {"field": "type", "type": "nominal", "scale": {"domain": ["Wind", "Solar", "Hydro", "Bioenergy"], "range": ["#2ca02c", "#ff7f0e", "#1f77b4", "#d62728"]}},
                     "tooltip": [
                         {"field": "name", "type": "nominal"},
                         {"field": "postcode", "type": "nominal"},
@@ -278,7 +315,7 @@
                         {"field": "type", "type": "nominal"}
                     ]
                 },
-                "title": "Renewable Energy Installations on Australia Map (Size: Capacity, Color: Type)"
+                "title": "Renewable Energy Installations on Australia Map"
             };
 
             // Visualization 2: Stacked Bar Chart - Renewable Source Breakdown by State
@@ -295,14 +332,14 @@
                 "encoding": {
                     "x": {"field": "state", "type": "nominal"},
                     "y": {"field": "gwh", "type": "quantitative", "stack": "normalize", "title": "Proportion"},
-                    "color": {"field": "source", "type": "nominal", "scale": {"scheme": "category10"}},
+                    "color": {"field": "source", "type": "nominal", "scale": {"domain": ["Solar", "Wind", "Hydro", "Bioenergy"], "range": ["#ff7f0e", "#2ca02c", "#1f77b4", "#d62728"]}},
                     "tooltip": [
                         {"field": "state"},
                         {"field": "source"},
                         {"field": "gwh", "format": ".0f"}
                     ]
                 },
-                "title": "Renewable Energy Source Breakdown by State (Normalized)"
+                "title": "Renewable Energy Source Breakdown by State"
             };
 
             // Visualization 3: Solar Installations Trend
@@ -334,7 +371,7 @@
                 "encoding": {
                     "x": {"field": "year", "type": "ordinal"},
                     "y": {"field": "installations", "type": "quantitative"},
-                    "color": {"value": "#1f77b4"},
+                    "color": {"value": "#2ca02c"},
                     "tooltip": [
                         {"field": "year"},
                         {"field": "installations", "format": ".0f"}
@@ -353,7 +390,7 @@
                 "encoding": {
                     "x": {"field": "year", "type": "ordinal"},
                     "y": {"field": "installations", "type": "quantitative"},
-                    "color": {"value": "#2ca02c"},
+                    "color": {"value": "#1f77b4"},
                     "tooltip": [
                         {"field": "year"},
                         {"field": "installations", "format": ".0f"}
@@ -379,7 +416,7 @@
                     ]
                 },
                 "view": {"stroke": null},
-                "title": "Per-Capita Renewables GWh by State (Radial)"
+                "title": "Per-Capita Renewables GWh by State"
             };
 
 
@@ -399,7 +436,7 @@
                         {"field": "total_renewables", "format": ".0f"}
                     ]
                 },
-                "title": "Total Renewables by State (GWh)"
+                "title": "Total Renewables by State"
             };
 
             vegaEmbed('#map', spec1);
@@ -410,13 +447,6 @@
             vegaEmbed('#wind-trend', spec6);
             vegaEmbed('#hydro-trend', spec7);
 
-            // Add interactivity to narratives
-            document.querySelectorAll('.collapsible').forEach(button => {
-                button.addEventListener('click', () => {
-                    const content = button.nextElementSibling;
-                    content.classList.toggle('collapsed');
-                });
-            });
 
             // State mapping
             const stateMap = {
@@ -473,7 +503,7 @@
                 let title5 = "Total Renewables by State (GWh)";
                 if (energySelected !== 'all') {
                     yField = energySelected;
-                    title5 = energySelected.charAt(0).toUpperCase() + energySelected.slice(1).replace('_', ' ') + " by State (GWh)";
+                    title5 = energySelected.charAt(0).toUpperCase() + energySelected.slice(1).replace('_', ' ') + " by State";
                 }
 
                 const spec1Filtered = {
@@ -505,7 +535,7 @@
                                 "longitude": {"field": "lon", "type": "quantitative"},
                                 "latitude": {"field": "lat", "type": "quantitative"},
                                 "size": {"field": "capacity", "type": "quantitative", "scale": {"range": [20, 500]}},
-                                "color": {"field": "type", "type": "nominal", "scale": {"domain": ["Wind", "Solar", "Hydro", "Bioenergy"], "range": ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728"]}},
+                                "color": {"field": "type", "type": "nominal", "scale": {"domain": ["Wind", "Solar", "Hydro", "Bioenergy"], "range": ["#2ca02c", "#ff7f0e", "#1f77b4", "#d62728"]}},
                                 "tooltip": [
                                     {"field": "name", "type": "nominal"},
                                     {"field": "postcode", "type": "nominal"},
@@ -515,7 +545,7 @@
                             }
                         }
                     ],
-                    "title": "Renewable Energy Installations on Australia Map (Size: Capacity, Color: Type)"
+                    "title": "Renewable Energy Installations on Australia Map"
                 };
 
                 const spec2Filtered = {
@@ -531,14 +561,14 @@
                     "encoding": {
                         "x": {"field": "state", "type": "nominal"},
                         "y": {"field": "gwh", "type": "quantitative", "stack": "normalize", "title": "Proportion"},
-                        "color": {"field": "source", "type": "nominal", "scale": {"scheme": "category10"}},
+                        "color": {"field": "source", "type": "nominal", "scale": {"domain": ["Solar", "Wind", "Hydro", "Bioenergy"], "range": ["#ff7f0e", "#2ca02c", "#1f77b4", "#d62728"]}},
                         "tooltip": [
                             {"field": "state"},
                             {"field": "source"},
                             {"field": "gwh", "format": ".0f"}
                         ]
                     },
-                    "title": "Renewable Energy Source Breakdown by State (Normalized)"
+                    "title": "Renewable Energy Source Breakdown by State"
                 };
 
 
@@ -558,7 +588,7 @@
                         ]
                     },
                     "view": {"stroke": null},
-                    "title": "Per-Capita Renewables GWh by State (Radial)"
+                    "title": "Per-Capita Renewables GWh by State"
                 };
 
                 const spec5Filtered = {
