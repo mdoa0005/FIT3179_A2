@@ -99,7 +99,8 @@
         <h2>Dashboard Introduction</h2>
         <div class="content">
             This dashboard provides an interactive overview of renewable energy installations and trends across Australia.
-            Explore the map to visualise the locations of <span class="wind">wind</span>, <span class="solar">solar</span>, <span class="hydro">hydro</span>, and <span class="bioenergy">bioenergy</span> projects, with circle sizes representing
+            Explore the map to visualise the locations of <span class="wind">wind</span>, <span class="solar">solar</span>, 
+            <span class="hydro">hydro</span>, and <span class="bioenergy">bioenergy</span> projects, with circle sizes representing
             capacity and colours indicating energy type. Use the filters to focus on specific states or energy types, and examine
             the charts for detailed insights into renewable energy adoption and growth. The dashboard includes trend lines showing
             historical installation patterns, state-by-state breakdowns of energy sources, per-capita comparisons, and total production
@@ -295,7 +296,7 @@
             }).filter(d => d.state && d.state !== 'Australia');
 
 
-            // Visualization 1: Australia Map with Farm Locations
+            // Visualisation 1: Australia Map with Farm Locations
             const spec1 = {
                 "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
                 "width": "container",
@@ -318,7 +319,7 @@
                 "title": "Renewable Energy Installations on Australia Map"
             };
 
-            // Visualization 2: Stacked Bar Chart - Renewable Source Breakdown by State
+            // Visualisation 2: Stacked Bar Chart - Renewable Source Breakdown by State
             const spec2 = {
                 "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
                 "width": "container",
@@ -342,7 +343,7 @@
                 "title": "Renewable Energy Source Breakdown by State"
             };
 
-            // Visualization 3: Solar Installations Trend
+            // Visualisation 3: Solar Installations Trend
             const spec3 = {
                 "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
                 "width": "container",
@@ -361,7 +362,7 @@
                 "title": "Yearly Solar Installations Trend"
             };
 
-            // Visualization 4: Wind Installations Trend
+            // Visualisation 4: Wind Installations Trend
             const spec6 = {
                 "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
                 "width": "container",
@@ -380,7 +381,7 @@
                 "title": "Yearly Wind Installations Trend"
             };
 
-            // Visualization 5: Hydro Installations Trend
+            // Visualisation 5: Hydro Installations Trend
             const spec7 = {
                 "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
                 "width": "container",
@@ -399,7 +400,7 @@
                 "title": "Yearly Hydro Installations Trend"
             };
 
-            // Visualization 6: Radial Chart - Per-Capita Renewables by State
+            // Visualisation 6: Radial Chart - Per-Capita Renewables by State
             const spec4 = {
                 "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
                 "width": "container",
@@ -420,7 +421,7 @@
             };
 
 
-            // Visualization 7: Total Renewables by State
+            // Visualisation 7: Total Renewables by State
             const spec5 = {
                 "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
                 "width": "container",
