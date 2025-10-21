@@ -7,7 +7,7 @@
   "encoding": {
     "x": {"field": "year", "type": "ordinal"},
     "y": {"field": "installations", "type": "quantitative"},
-    "color": {"value": "#2ca02c"},
+    "color": {"value": "#1f77b4"},
     "tooltip": [
       {"field": "year"},
       {"field": "installations", "format": ".0f"}
